@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GymMate — Dashboard (Polished, Working)</title>
+  <meta name="description" content="Dashboard UI for GymMate — trainers Rhedoy & Durjoy, slot booking, attendance, taka currency. Frontend-only demo." />
+  <style>
+    /* ---------- Design tokens ---------- */
+    :root{
+      --bg:#f3f6fb;
+      --sidebar:#ffffff;
+      --panel:#ffffff;
+      --muted:#7b8a99;
+      --text:#0b2130;
+      --primary:#6d28d9; /* purple */
+      --accent:#06b6d4;  /* teal */
+      --success:#10b981;  /* green */
+      --danger:#ef4444;
+      --glass: rgba(11,33,48,0.04);
+      --radius:12px;
+      --shadow: 0 10px 30px rgba(11,33,48,0.08);
+      --max-width:1300px;
+      --slot-capacity:15;
+      scroll-behavior: smooth;
+    }
+    .logo img {
+  width: 120px;   /* adjust size */
+  height: auto;   /* keeps image ratio */
+}
+
+    /* small reset */
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    a{text-decoration:none;color:inherit}
+    .wrap{max-width:var(--max-width);margin:28px auto;padding:20px}
+
+    /* layout */
+    .app{display:grid;grid-template-columns:260px 1fr;gap:20px}
+    .sidebar{background:var(--sidebar);border-radius:14px;padding:18px;height:calc(100vh - 56px);box-shadow:var(--shadow);position:sticky;top:28px;overflow:auto}
+    .logo{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+    .logo .mark{ width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:white;font-weight:800}
+    .logo{im}
+    /* new vertical menu style matching provided image */
+    .side-menu{display:flex;flex-direction:column;gap:22px;padding-top:10px}
+    .side-menu a{color:#8f9ba6;padding:6px 4px;font-size:16px;border-left:3px solid transparent}
+    .side-menu a:hover{color:var(--text)}
+    .side-menu a.active{color:var(--text);font-weight:700;border-left-color:var(--primary);background:linear-gradient(90deg, rgba(109,40,217,0.03), transparent);padding-left:12px;border-radius:6px}
+
+    .nav{display:flex;flex-direction:column;gap:6px}
+    .nav a{padding:10px 12px;border-radius:10px;color:var(--muted);display:flex;align-items:center;gap:10px}
+    .nav a.active{background:linear-gradient(90deg, rgba(109,40,217,0.08), rgba(6,182,212,0.04));color:var(--text);font-weight:700}
+
+    /* main content */
+    .main{display:flex;flex-direction:column;gap:18px}
+    .topbar{display:flex;justify-content:space-between;align-items:center}
+    .search{display:flex;gap:8px;align-items:center;background:var(--panel);padding:10px 12px;border-radius:10px;box-shadow:var(--shadow)}
+    .avatar{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--primary));display:grid;place-items:center;color:white;font-weight:800}
+
+    /* grid of dashboard cards */
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .card{background:var(--panel);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+    .card h3{margin:0 0 8px 0}
+
+    /* progress circle (simple) */
+    .progress{display:flex;align-items:center;gap:12px}
+    .circle{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--primary) 0deg, var(--primary) 120deg, rgba(0,0,0,0.06) 120deg);box-shadow:inset 0 -6px 18px rgba(0,0,0,0.05)}
+
+    /* stats bar chart */
+    .bar-chart{display:flex;gap:8px;align-items:end;height:110px}
+    .bar{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--primary),var(--accent));display:flex;align-items:flex-end;justify-content:center;color:white;font-weight:700;transition:height .6s}
+
+    /* activity map placeholder */
+    .map{height:110px;border-radius:10px;background:linear-gradient(180deg, rgba(6,182,212,0.08), rgba(109,40,217,0.04));display:grid;place-items:center;color:var(--muted)}
+
+    /* timetable */
+    .timetable{margin-top:8px;border-radius:10px;overflow:auto}
+    .timetable table{width:100%;border-collapse:collapse}
+    .timetable th, .timetable td{padding:10px;border-bottom:1px solid rgba(11,33,48,0.04)}
+    .timetable th{font-weight:700;text-align:left}
+
+    /* members table */
+    .table{width:100%;border-collapse:collapse}
+    .table th, .table td{padding:10px;border-bottom:1px solid rgba(11,33,48,0.04)}
+    .badge{padding:6px 8px;border-radius:999px;font-weight:700}
+    .badge.success{background:rgba(16,185,129,0.12);color:var(--success)}
+    .badge.warn{background:rgba(250,204,21,0.12);color:#b45309}
+
+    /* right column - booking panel */
+    .right-col{display:flex;flex-direction:column;gap:14px}
+    .slot{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));box-shadow:0 8px 26px rgba(11,33,48,0.06)}
+    .slot .left{display:flex;gap:12px;align-items:center}
+    .slot .meta{display:flex;flex-direction:column}
+    .btn{background:linear-gradient(90deg,var(--primary),var(--accent));color:white;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+    .btn.ghost{background:transparent;border:1px solid rgba(11,33,48,0.06);color:var(--text)}
+
+    .availability{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .seats{height:12px;background:rgba(11,33,48,0.05);border-radius:999px;overflow:hidden}
+    .seats .fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--primary));transition:width .6s}
+
+    /* minor styles */
+    .muted{color:var(--muted)}
+    .flex{display:flex;gap:12px;align-items:center}
+    .text-right{text-align:right}
+
+    /* responsive */
+    @media (max-width:1000px){.app{grid-template-columns:1fr}.sidebar{display:none}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="logo"><img src="ff.png" alt="Gym Logo"><div>
+          <div style="font-weight:800">GymMate</div>
+          <div class="muted" style="font-size:13px">Personal dashboard</div>
+        </div></div>
+
+        <!-- vertical simple menu matching the image -->
+        <nav class="side-menu" aria-label="Quick menu">
+          <a href="#programs" data-target="programs">Programs</a>
+          <a href="#schedule" data-target="schedule">Schedule</a>
+          <a href="#members" data-target="members">Members</a>
+          <a href="#payments" data-target="payments">Payments</a>
+          <a href="#settings" data-target="settings">Settings</a>
+        </nav>
+
+        <div style="position:absolute;bottom:20px;left:18px;right:18px">
+          <div style="display:flex;gap:10px;align-items:center">
+            <div class="avatar">Rh</div>
+            <div>
+              <div style="font-weight:700">Rhedoy</div>
+              <div class="muted">User</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="topbar">
+          <div class="search">
+            <input type="text" placeholder="Search exercises, members..." style="border:none;background:transparent;outline:none;min-width:320px" />
+          </div>
+          
+        </div>
+
+        <section id="overview" class="grid-3">
+          <div class="card">
+            <div class="flex" style="justify-content:space-between;align-items:center">
+              <div>
+                <div class="muted">Progress</div>
+                <h3 style="margin:6px 0">Lower Body</h3>
+                <div class="muted">Cardio • 1 Hour</div>
+              </div>
+              <div class="progress">
+                <div class="circle"><div style="font-weight:800">65%</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="flex" style="justify-content:space-between;align-items:center">
+              <div>
+                <div class="muted">Progress</div>
+                <h3 style="margin:6px 0">Upper Body</h3>
+                <div class="muted">Biceps • 2 Hours</div>
+              </div>
+              <div class="progress">
+                <div class="circle" style="background:conic-gradient(var(--success) 0deg,var(--success) 220deg, rgba(0,0,0,0.06) 220deg)"><div style="font-weight:800;color:#032014">89%</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card text-right">
+            <div class="muted">Daily Goal</div>
+            <h3 style="margin:6px 0">95 / 150 KCal</h3>
+            <div class="muted">You have reached 78% of your goal this month</div>
+          </div>
+        </section>
+
+        <section id="programs">
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div class="muted">Workout Statistic</div>
+                  <h3 style="margin:6px 0">This Week</h3>
+                </div>
+                <div class="muted">View: Weekly</div>
+              </div>
+
+              <div style="margin-top:12px">
+                <div class="bar-chart">
+                  <div class="bar" style="height:58%">58</div>
+                  <div class="bar" style="height:72%">72</div>
+                  <div class="bar" style="height:60%">60</div>
+                  <div class="bar" style="height:82%">82</div>
+                  <div class="bar" style="height:45%">45</div>
+                  <div class="bar" style="height:90%">90</div>
+                  <div class="bar" style="height:66%">66</div>
+                </div>
+
+                <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+                  <div class="muted">Mon</div><div class="muted">Tue</div><div class="muted">Wed</div><div class="muted">Thu</div><div class="muted">Fri</div><div class="muted">Sat</div><div class="muted">Sun</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="muted">Run Activity</div>
+              <h3 style="margin:6px 0">Yesterday, 5:00 AM</h3>
+              <div class="map" aria-label="Run map preview">
+                <!-- Embedded Google Map (centered on Dhaka as example). Replace lat,lng in the URL with your route coordinates or a place ID. -->
+                <iframe
+                  src="https://maps.google.com/maps?q=23.8103,90.4125&z=13&output=embed"
+                  width="100%" height="100%" style="border:0;border-radius:8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:10px">
+                <div class="muted">Total Steps</div>
+                <div>10,560</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="schedule" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+          <div class="card timetable">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="muted">My Exercise</div>
+                <h3 style="margin:6px 0">Planned Sessions</h3>
+              </div>
+              <div class="muted">This Week</div>
+            </div>
+
+            <div style="margin-top:10px;overflow:auto">
+              <table class="table">
+                <thead>
+                  <tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Total Calories</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Biceps and Chest</td><td>05 Sets</td><td>25-30</td><td>35 kg - 40 kg</td><td>120 Kcal</td><td><span class="badge success">Completed</span></td></tr>
+                  <tr><td>Back and Shoulders</td><td>05 Sets</td><td>45-50</td><td>35 kg - 40 kg</td><td>180 Kcal</td><td><span class="badge warn">In Progress</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Booking panel on right inside main flow -->
+          <div class="card" id="members">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="muted">Book Slot</div>
+                <h3 style="margin:6px 0">Reserve a Class</h3>
+              </div>
+              <div class="muted">Capacity: <strong>15</strong></div>
+            </div>
+
+            <div style="margin-top:10px" id="booking-area">
+              <!-- JS renders slots here -->
+            </div>
+          </div>
+        </section>
+
+        <section id="payments" style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="card">
+            <div class="muted">Payments</div>
+            <h3 style="margin:6px 0">Recent Invoices</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+              <div style="display:flex;justify-content:space-between"><div class="muted">Invoice #1024</div><div>৳ 3,900</div></div>
+              <div style="display:flex;justify-content:space-between"><div class="muted">Invoice #1018</div><div>৳ 1,900</div></div>
+            </div>
+          </div>
+
+          <div class="card" id="settings">
+            <div class="muted">Settings</div>
+            <h3 style="margin:6px 0">Preferences</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+              <label class="muted"><input type="checkbox" /> Email notifications</label>
+              <label class="muted"><input type="checkbox" /> Show public profile</label>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- right column -->
+      
+    </div>
+  </div>
+
+  <script>
+    // Booking UI + simple interactions + sidebar behavior
+    (function(){
+      const slots = [
+        {id:1,time:'06:30 - Morning Burn',trainer:'Rhedoy',filled:7},
+        {id:2,time:'07:30 - Yoga Flow',trainer:'Rhedoy',filled:0},
+        {id:3,time:'18:00 - Strength Lab',trainer:'Durjoy',filled:12},
+        {id:4,time:'19:30 - HIIT Express',trainer:'Guest',filled:10}
+      ];
+      const CAP = Number(getComputedStyle(document.documentElement).getPropertyValue('--slot-capacity')) || 15;
+      const bookingArea = document.getElementById('booking-area');
+
+      function renderBooking(){
+        bookingArea.innerHTML = '';
+        slots.forEach(s=>{
+          const avail = Math.max(0, CAP - s.filled);
+          const percent = Math.round((s.filled/CAP)*100);
+
+          const slot = document.createElement('div');
+          slot.className = 'slot';
+          slot.innerHTML = `
+            <div class="left">
+              <div style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:white;font-weight:800">${s.trainer.slice(0,2)}</div>
+              <div class="meta">
+                <div style="font-weight:800">${s.time}</div>
+                <div class="muted">Trainer: ${s.trainer}</div>
+                <div class="seats" style="width:160px;">
+                  <div class="fill" style="width:${percent}%"></div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+              <div class="muted">Seats left: <strong>${avail}</strong></div>
+              <div style="display:flex;gap:8px">
+                <button class="btn ghost" data-id="${s.id}">Details</button>
+                <button class="btn" data-id="${s.id}">Take slot</button>
+              </div>
+            </div>
+          `;
+
+          bookingArea.appendChild(slot);
+        });
+
+        // attach handlers
+        bookingArea.querySelectorAll('.btn').forEach(btn=>btn.addEventListener('click', onAction));
+      }
+
+      function onAction(e){
+        const id = Number(e.currentTarget.dataset.id);
+        const isTake = e.currentTarget.textContent.trim() === 'Take slot';
+        const slot = slots.find(s=>s.id===id);
+        if(!slot) return;
+        if(isTake){
+          if(slot.filled >= CAP){
+            alert('Slot full'); return;
+          }
+          slot.filled += 1;
+          renderBooking();
+          // animate attendance
+          const att = document.getElementById('attendance-fill');
+          let w = parseFloat(att.style.width) || 68; w = Math.min(100, w + 0.6); att.style.width = w + '%';
+        } else {
+          alert(`${slot.time}
+Trainer: ${slot.trainer}
+Filled: ${slot.filled}/${CAP}`);
+        }
+      }
+
+      renderBooking();
+
+      // small interactive bars animation on load
+      document.querySelectorAll('.bar').forEach(b=>{const h=b.style.height;b.style.height='4%';setTimeout(()=>b.style.height=h,80)});
+      document.querySelectorAll('.seats .fill').forEach(f=>{const w=f.style.width;f.style.width='2%';setTimeout(()=>f.style.width=w,80)});
+
+      // Sidebar links: smooth scrolling + active state using IntersectionObserver
+      const menuLinks = document.querySelectorAll('.side-menu a');
+      const sections = Array.from(menuLinks).map(l => document.getElementById(l.getAttribute('data-target'))).filter(Boolean);
+
+      // if a link has a matching section id, clicking scrolls to it and sets active class
+      menuLinks.forEach(link=>{
+        const targetId = link.getAttribute('data-target');
+        const targetEl = document.getElementById(targetId);
+        if(targetEl){
+          link.addEventListener('click', (ev)=>{
+            ev.preventDefault();
+            // special behavior for 'members' and 'payments'
+            if(targetId === 'members'){
+              showMembersDenied();
+              setActive(link);
+              return;
+            }
+            if(targetId === 'payments'){
+              showPaymentsOptions();
+              setActive(link);
+              targetEl.scrollIntoView({behavior:'smooth',block:'start'});
+              return;
+            }
+
+            targetEl.scrollIntoView({behavior:'smooth',block:'start'});
+            setActive(link);
+          });
+        } else {
+          // if no matching section, still allow a click to set active (useful if sections will be added later)
+          link.addEventListener('click', (ev)=>{ev.preventDefault();setActive(link);});
+        }
+      });
+
+      function setActive(activeLink){
+        menuLinks.forEach(l=>l.classList.remove('active'));
+        activeLink.classList.add('active');
+      }
+
+      // IntersectionObserver to highlight menu based on viewport
+      const observer = new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          const id = entry.target.id;
+          const link = document.querySelector('.side-menu a[data-target="'+id+'"]');
+          if(entry.isIntersecting){
+            menuLinks.forEach(l=>l.classList.remove('active'));
+            if(link) link.classList.add('active');
+          }
+        });
+      },{root:null,rootMargin:'-120px 0px -60% 0px',threshold:0.2});
+
+      sections.forEach(s=>observer.observe(s));
+
+      // show payments options UI
+      function showPaymentsOptions(){
+        const paymentsSection = document.getElementById('payments');
+        if(!paymentsSection) return;
+        // build options HTML
+        let html = `
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+            <div style="font-weight:700">Choose a payment method</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" data-method="bkash">bKash</button>
+              <button class="btn" data-method="nagad">Nagad</button>
+              <button class="btn" data-method="rocket">Rocket</button>
+            </div>
+            <div class="muted" style="font-size:13px">Pay Freely and Safely</div>
+          </div>
+        `;
+        // insert below existing payments content
+        let container = paymentsSection.querySelector('.payments-options');
+        if(!container){
+          container = document.createElement('div');
+          container.className = 'payments-options';
+          paymentsSection.appendChild(container);
+        }
+        container.innerHTML = html;
+
+        // attach handlers correctly
+        container.querySelectorAll('button[data-method]').forEach(btn=>{
+          btn.addEventListener('click', (ev)=>{
+            const method = ev.currentTarget.getAttribute('data-method');
+            alert(`Simulating payment via ${method.toUpperCase()}`);
+          });
+        });
+
+        paymentsSection.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+
+      function showMembersDenied(){
+        const membersSection = document.getElementById('members');
+        if(!membersSection) return;
+        // show inline alert
+        let banner = membersSection.querySelector('.members-denied');
+        if(!banner){
+          banner = document.createElement('div');
+          banner.className = 'members-denied';
+          banner.style.marginTop = '12px';
+          banner.style.padding = '12px';
+          banner.style.borderRadius = '8px';
+          banner.style.background = 'linear-gradient(90deg, rgba(239,68,68,0.08), rgba(239,68,68,0.03))';
+          banner.style.border = '1px solid rgba(239,68,68,0.12)';
+          banner.innerHTML = '<strong style="color:var(--danger)">Access denied:</strong> You are not allowed to view the Members area.';
+          // insert at top of members card content
+          const header = membersSection.querySelector('div');
+          membersSection.insertBefore(banner, header.nextSibling);
+        }
+        membersSection.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+
+    })();
+  </script>
+</body>
+</html>
