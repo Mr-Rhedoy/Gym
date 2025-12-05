@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GymMate — Fixed Dashboard Position</title>
+  <meta name="description" content="Fixed demo dashboard for GymMate." />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar" aria-label="Main sidebar">
+      <div class="brand">
+  <img src="ff.png" alt="GymMate Logo" class="logo">
+  <div class="brand-text">
+    <h1 class="site-title">GymMate</h1>
+    <p class="site-sub">Personal dashboard</p>
+  </div>
+</div>
+
+      <nav class="menu" aria-label="Primary">
+        <a href="#overview" class="active" data-target="overview">Overview</a>
+        <a href="#programs" data-target="programs">Programs</a>
+        <a href="#schedule" data-target="schedule">Schedule</a>
+        <a href="#members" data-target="members">Members</a>
+        <a href="#payments" data-target="payments">Payments</a>
+        <a href="#settings" data-target="settings">Settings</a>
+        <!-- OPTIONAL: Sidebar Bookings link -->
+        <a href="#members" data-action="open-bookings">Bookings</a>
+      </nav>
+
+      <div class="profile" id="profile">
+        <div class="avatar" aria-hidden="true">Rh</div>
+        <div>
+          <div class="strong">Rhedoy</div>
+          <div class="muted small">User</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN APP -->
+    <main class="dashboard" id="app" tabindex="-1">
+
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div class="search" role="search">
+          <input id="searchInput" type="search" placeholder="Search exercises, members..." aria-label="Search" />
+        </div>
+
+        <div class="top-actions">
+          <!-- FIXED: Added data-action for bookings -->
+          <button class="icon-btn" id="openBookings" data-action="open-bookings" type="button">Bookings</button>
+
+          <!-- FIXED: Added Book button that JS needs -->
+          <button class="icon-btn" id="newBooking" data-action="open-book" type="button">Book</button>
+
+          <div class="avatar small" aria-hidden="true">RD</div>
+        </div>
+      </div>
+
+      <!-- OVERVIEW -->
+      <section id="overview" class="grid-3 cards" aria-labelledby="overview-h">
+        <h2 id="overview-h" class="visually-hidden">Overview</h2>
+
+        <article class="card" style="background-image: url('lowere.avif'); background-size: cover; background-position: center; min-height: 160px;">
+  <div class="card-head">
+    <div class="muted">Progress</div>
+    <h3>Lower Body</h3>
+    <div class="muted small">Cardio · 1 Hour</div>
+  </div>
+  <div class="card-side">
+    <div class="circle" data-pct="65" aria-hidden="true"><strong>65%</strong></div>
+  </div>
+</article>
+
+
+        <article class="card" style="background-image: url('upper.webp'); background-size: cover; background-position: center; min-height: 160px;">
+  <div class="card-head">
+    <div class="muted">Progress</div>
+    <h3>Upper Body</h3>
+    <div class="muted small">Biceps · 2 Hours</div>
+  </div>
+  <div class="card-side">
+    <div class="circle circle--success" data-pct="89" aria-hidden="true"><strong>89%</strong></div>
+  </div>
+</article>
+
+
+        <article class="card daily-bg">
+
+          <div>
+            <div class="muted" >Daily Goal</div>
+            <h3>95 / 150 KCal</h3>
+            <div class="muted small">You have reached 78% of your goal this month</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="card wide" aria-labelledby="dashboard-h" style="margin-top:14px">
+        <h2 id="dashboard-h" class="visually-hidden">Dashboard</h2>
+
+        <div class="section-head">
+          <div>
+            <div class="muted">Overview</div>
+            <h3>Dashboard Summary</h3>
+          </div>
+          <div class="muted small">Quick stats & recent data</div>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div class="card" style="min-width:180px;flex:1">
+            <div class="muted">Bookings</div>
+            <div style="font-size:1.2rem;font-weight:800" id="kpi-bookings-value">0</div>
+            <div class="muted small">Confirmed this month</div>
+          </div>
+
+          <div class="card" style="min-width:180px;flex:1">
+            <div class="muted">Upcoming</div>
+            <div style="font-size:1.2rem;font-weight:800" id="kpi-upcoming-value">0</div>
+            <div class="muted small">Next 7 days</div>
+          </div>
+
+          <div class="card" style="min-width:180px;flex:1">
+            <div class="muted">Cancellations</div>
+            <div style="font-size:1.2rem;font-weight:800" id="kpi-cancel-value">0</div>
+            <div class="muted small">This month</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;overflow:auto">
+          <table class="table" aria-label="Dashboard data">
+            <thead>
+              <tr>
+                <th>Session</th><th>Trainer</th><th>Date</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="oldDashboardTableBody">
+              <tr><td colspan="5" class="muted">No data loaded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PROGRAMS -->
+      <section id="programs" class="card wide" aria-labelledby="prog-h" style="margin-top:14px">
+        <h2 id="prog-h" class="visually-hidden">Programs</h2>
+
+        <div class="section-head">
+          <div>
+            <div class="muted">Workout Statistic</div>
+            <h3>This Week</h3>
+          </div>
+          <div class="muted small">View: Weekly</div>
+        </div>
+
+        <div class="bar-chart" aria-hidden="true">
+          <div class="bar" style="--h:58%">58</div>
+          <div class="bar" style="--h:72%">72</div>
+          <div class="bar" style="--h:60%">60</div>
+          <div class="bar" style="--h:82%">82</div>
+          <div class="bar" style="--h:45%">45</div>
+          <div class="bar" style="--h:90%">90</div>
+          <div class="bar" style="--h:66%">66</div>
+        </div>
+      </section>
+
+      <!-- SCHEDULE / MEMBERS -->
+      <section id="schedule" class="two-col" aria-labelledby="sched-h" style="margin-top:14px">
+        <h2 id="sched-h" class="visually-hidden">Schedule</h2>
+
+        <div class="card timetable">
+          <div class="section-head">
+            <div>
+              <div class="muted">My Exercise</div>
+              <h3>Planned Sessions</h3>
+            </div>
+            <div class="muted small">This Week</div>
+          </div>
+
+          <table class="table" aria-label="Planned sessions">
+            <thead>
+              <tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Calories</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Biceps & Chest</td><td>05</td><td>25–30</td><td>35–40 kg</td><td>120</td><td><span class="pill pill--success">Completed</span></td></tr>
+              <tr><td>Back & Shoulders</td><td>05</td><td>45–50</td><td>35–40 kg</td><td>180</td><td><span class="pill pill--warn">In Progress</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- BOOKINGS ASIDE (MEMBERS BLOCK) -->
+        <aside class="card bookings" id="members" aria-labelledby="book-h">
+          <h3 id="book-h" class="muted">Reserve a Class</h3>
+          <div class="muted small">Capacity: <strong id="capLabel">15</strong></div>
+
+          <div id="bookingList" class="booking-list" aria-live="polite"></div>
+
+          <div class="muted tiny" style="margin-top:10px">
+            Click a slot to view details or reserve it. No page reloads.
+          </div>
+
+          <!-- Optional new booking CTA -->
+          <button class="btn" data-action="open-book" style="margin-top:10px;width:100%;">Book a Session</button>
+        </aside>
+      </section>
+
+      <!-- PAYMENTS / SETTINGS -->
+      <section id="payments" class="two-col mt" aria-labelledby="pay-h" style="margin-top:14px">
+        <div class="card">
+          <div class="muted">Payments</div>
+          <h3>Recent Invoices</h3>
+          <ul class="invoices">
+            <li><span class="muted">Invoice #1024</span><strong>৳ 3,900</strong></li>
+            <li><span class="muted">Invoice #1018</span><strong>৳ 1,900</strong></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="muted">Settings</div>
+          <h3>Preferences</h3>
+          <label class="muted"><input type="checkbox" id="emailNotif" /> Email notifications</label><br>
+          <label class="muted"><input type="checkbox" id="publicProfile" /> Show public profile</label>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-panel" role="document" tabindex="-1">
+      <button class="modal-close" aria-label="Close" type="button" data-action="close-modal">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

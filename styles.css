@@ -1,0 +1,471 @@
+/* ============================================================
+   GymMate — Combined Full styles.css
+   - Soft Purple Glow theme (dark), layout fixes, modal upgrade
+   - Additional light-style overrides for Overview & Programs cards
+   - Gradient workout bar chart styling
+   - Compatible with your existing HTML & JS (no HTML changes needed)
+   ============================================================ */
+
+/* -------------------------
+   Root variables
+   ------------------------- */
+   :root{
+    --bg: #0b0b10;
+    --bg-card: #13131a;
+    --bg-card-light: #1a1a22;
+    --purple: #a688ff;
+    --purple-soft: #c9b5ff;
+    --purple-glow: rgba(166,136,255,0.25);
+    --accent-cyan: #06b6d4;
+    --accent-indigo: #6366f1;
+    --text: #e6e6f0;
+    --text-muted: #9a9ab2;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --radius: 14px;
+    --transition: 180ms ease;
+    --page-gap: 20px;
+  }
+  
+  /* -------------------------
+     Base / Reset
+     ------------------------- */
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+  
+  html,body { height:100%; }
+  body{
+    margin:0;
+    font-family: "Inter", system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  
+  /* Utilities */
+  .muted { color: var(--text-muted); }
+  .small { font-size: .85rem; }
+  .tiny { font-size: .75rem; }
+  .strong { font-weight:700; }
+  .visually-hidden{ position:absolute!important; height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap; }
+  
+  /* -------------------------
+     App layout
+     ------------------------- */
+  /* Main horizontal container */
+  .wrap{
+    display:flex;
+    align-items:flex-start;
+    gap: var(--page-gap);
+    min-height:100vh;
+    padding: 18px;
+  }
+  
+  /* Sidebar (left) */
+  .sidebar{
+    flex: 0 0 250px;
+    max-width:260px;
+    min-width:220px;
+    background: #0f0f15;
+    padding:22px;
+    border-right: 1px solid var(--border);
+    display:flex; flex-direction:column; justify-content:space-between;
+    border-radius:12px;
+    position: sticky;
+    top:20px;
+    height: calc(100vh - 40px);
+    overflow:auto;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  }
+  
+  /* Sidebar elements */
+  .brand{ display:flex; gap:10px; align-items:center; margin-bottom:16px; }
+  .mark{ width:40px; height:40px; border-radius:10px; background:var(--purple-glow); display:grid; place-items:center; color:var(--purple); font-weight:700; font-size:1.1rem; }
+  .menu{ margin-top:8px; display:flex; flex-direction:column; gap:6px; }
+  .menu a{ display:block; padding:10px; border-radius:10px; text-decoration:none; color:var(--text-muted); transition:var(--transition); }
+  .menu a:hover{ background: var(--purple-glow); color:var(--text); }
+  .menu a.active{ background: rgba(166,136,255,0.18); color:var(--purple); font-weight:600; }
+  
+  /* Profile block */
+  .profile{ display:flex; gap:12px; align-items:center; margin-top:16px; }
+  .avatar{ width:42px; height:42px; border-radius:50%; background:var(--purple-glow); display:grid; place-items:center; color:var(--purple); font-weight:700; }
+  .avatar.small{ width:32px; height:32px; font-size:.85rem; }
+  
+  /* -------------------------
+     Dashboard main column
+     ------------------------- */
+  .dashboard{
+    background: #180219;
+    flex:1 1 auto;
+    min-width:0; /* prevent overflow */
+    padding: 4px 0;
+    margin-left:0;
+  }
+  
+  /* Topbar */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    margin-bottom:18px; padding-right:6px;
+  }
+  .search input{
+    background: var(--bg-card);
+    padding:10px 14px; border-radius:12px; border:1px solid var(--border);
+    outline:none; color:var(--text); width:240px;
+  }
+  .top-actions{ display:flex; align-items:center; gap:10px; }
+  
+  /* Buttons */
+  .btn, .icon-btn{
+    cursor:pointer; border-radius:12px; border:0; padding:8px 14px;
+    background:var(--purple-glow); color:var(--text); transition:var(--transition);
+  }
+  .btn:hover, .icon-btn:hover{ background: rgba(243, 136, 255, 0.449); }
+  .btn-ghost{ background:transparent; border:1px solid var(--border); color:var(--text); }
+  .btn-ghost:hover{ border-color:var(--purple); color:var(--purple); }
+  
+  /* -------------------------
+     Cards & grids
+     ------------------------- */
+  .card{
+    background: var(--bg-card);
+    border-radius:12px;
+    padding:16px;
+    border:1px solid var(--border);
+    box-shadow: 0 0 22px rgba(166,136,255,0.05);
+    transition: var(--transition);
+  }
+  .card:hover{ border-color:var(--border-strong); box-shadow: 0 0 26px rgba(166,136,255,0.08); }
+  
+  .cards{ display:grid; gap:14px; }
+  .grid-3{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:14px; }
+  
+  .card.wide { width:100%; }
+  
+  .section-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+  
+  /* KPI/card circle */
+  .kpi{ display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+  .kpi .circle{ width:68px; height:68px; border-radius:50%; display:grid; place-items:center; background: radial-gradient(circle at 40% 40%, rgba(166,136,255,0.25), rgba(166,136,255,0.05)); border:1px solid var(--border); }
+  
+  /* Success circle variant */
+  .circle--success{ border-color: #9affc2; background: radial-gradient(circle at 40% 40%, rgba(154,255,194,0.25), rgba(154,255,194,0.05)); }
+  
+  /* Progress circle text */
+  .circle strong{ position:relative; z-index:1; color:var(--text); font-size:1.05rem; }
+  
+  /* -------------------------
+     Table
+     ------------------------- */
+  .table{ width:100%; border-collapse:collapse; font-size:.92rem; }
+  .table th{ text-align:left; padding:12px; color:var(--purple-soft); border-bottom:1px solid var(--border-strong); }
+  .table td{ padding:12px; border-bottom:1px solid var(--border); color:var(--text-muted); }
+  .table tbody tr:hover{ background: rgba(166,136,255,0.06); color:var(--text); }
+  
+  /* Pills */
+  .pill{ padding:4px 10px; border-radius:999px; font-size:.78rem; }
+  .pill--success{ background: rgba(154,255,194,0.15); color:#9affc2; }
+  .pill--warn{ background: rgba(255,209,112,0.15); color:#ffd170; }
+  
+  /* Booking list */
+  .booking-list{ margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+  .booking-item{ padding:12px; background:var(--bg-card-light); border-radius:10px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  
+  /* -------------------------
+     Modal (base & upgraded)
+     ------------------------- */
+  .modal{
+    position:fixed; inset:0; background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    display:none; align-items:center; justify-content:center; z-index:9999;
+  }
+  .modal[aria-hidden="false"]{ display:flex; }
+  
+  .modal-panel{
+    background: linear-gradient(155deg, rgba(255,255,255,0.04), rgba(166,136,255,0.05)), var(--bg-card);
+    border-radius:18px; border:1px solid rgba(255,255,255,0.08);
+    padding:26px; width:min(480px, 94%); max-height:86vh; overflow:auto;
+    box-shadow: 0 0 40px rgba(166,136,255,0.18), 0 0 12px rgba(166,136,255,0.10);
+    animation: modalPop .28s cubic-bezier(.15,.8,.25,1);
+  }
+  @keyframes modalPop { from{ opacity:0; transform:translateY(20px) scale(.96); } to{ opacity:1; transform:none; } }
+  
+  .modal-close{
+    background: rgba(255,255,255,0.06);
+    border:none; color:var(--text-muted); width:36px; height:36px; border-radius:50%;
+    float:right; cursor:pointer; font-size:1.2rem; transition:var(--transition);
+  }
+  .modal-close:hover{ background: rgba(166,136,255,0.28); color:var(--purple); }
+  
+  /* Modal content: titles, inputs, submit */
+  #modalContent h3{ margin-top:0; margin-bottom:16px; font-size:1.3rem; font-weight:700; letter-spacing:.4px; color:var(--purple-soft); }
+  .modal-panel input{ width:100%; padding:12px 14px; margin-top:6px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color:var(--text); transition:160ms; }
+  .modal-panel input:focus{ border-color:var(--purple); box-shadow: 0 0 0 3px rgba(166,136,255,0.25); outline:none; }
+  .modal-panel .btn{ width:100%; margin-top:18px; padding:12px; border-radius:12px; font-weight:600; background: linear-gradient(135deg,var(--purple),var(--purple-soft)); color:#fff; border:none; transition:160ms; }
+  .modal-panel .btn:hover{ filter:brightness(1.12); box-shadow: 0 0 16px rgba(166,136,255,0.30); }
+  
+  /* -------------------------
+     Animations & reduced motion
+     ------------------------- */
+  .card, .booking-item { animation: fadeInUp .45s ease; }
+  @keyframes fadeInUp { from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  
+  /* -------------------------
+     Responsive
+     ------------------------- */
+  @media (max-width:980px){
+    .wrap{ flex-direction:column; gap:14px; padding:14px; }
+    .sidebar{ position: static; width:100%; max-width:none; height:auto; border-right:none; border-bottom:1px solid var(--border); padding:12px; border-radius:10px; }
+    .dashboard{ padding:0; }
+    .two-col{ grid-template-columns:1fr; }
+    .grid-3{ grid-template-columns:1fr; }
+    .search input{ width:100%; max-width:420px; }
+    .modal-panel{ width:96%; max-height:82vh; }
+  }
+  @media (max-width:560px){
+    .menu a{ padding:8px; font-size:.95rem; }
+    .avatar{ width:36px; height:36px; }
+    .topbar{ flex-direction:column; align-items:stretch; gap:12px; }
+  }
+  
+  /* ===========================================================
+     Light-style overrides for Overview & Programs (matching the image)
+     These are intentionally scoped so they don't change the rest
+     of your purple dark theme. Only the overview & programs cards
+     will use a light, airy card style with gradient bars / donuts.
+     =========================================================== */
+  
+  /* Light card look for overview & programs sections */
+  #overview .card,
+  #programs.card,
+  #programs .card,
+  #programs.card.wide {
+    background: #f9fafb;
+    color: #111827;
+    border-radius: 18px;
+    border: 1px solid #e5e7eb;
+    box-shadow:
+      0 18px 35px rgba(15,23,42,0.06),
+      0 0 0 1px rgba(148,163,184,0.06);
+    padding: 18px 20px;
+  }
+  
+  /* Muted text color inside light cards */
+  #overview .card .muted,
+  #programs .muted {
+    color: #6b7280;
+  }
+  
+  /* Headings inside light cards */
+  #overview .card h3,
+  #programs h3 {
+    color: #111827;
+    margin-bottom:4px;
+  }
+  
+  /* Overview: donut-style progress circle */
+  #overview .card .circle {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    position: relative;
+    display: grid;
+    place-items: center;
+    background: #260327; /* neutral base */
+    overflow: hidden;
+  }
+  
+  /* inner white disc */
+  #overview .card .circle::before{
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: inherit;
+    background: #fbf9fb;
+  }
+  
+  /* percentage label */
+  #overview .card .circle strong{
+    position: relative; z-index: 1; color: #111827; font-size: .95rem;
+  }
+  
+  /* Specific percent slices (example values from your screenshot)
+     If you have more percentages, we can add rules or use JS to set inline styles. */
+  #overview .card .circle[data-pct="65"]{
+    background: conic-gradient(#7c3aed 0deg 234deg, #e5e7eb 234deg 360deg);
+  }
+  #overview .card .circle[data-pct="89"]{
+    background: conic-gradient(#10b981 0deg 320deg, #e5e7eb 320deg 360deg);
+  }
+  
+  /* If a circle has other data-pct values and you want them supported by CSS,
+     add similar rules for those common percentages, or let me add a tiny JS helper. */
+  
+  /* ===========================================================
+     Gradient Workout Bars (programs) — matches screenshot
+     =========================================================== */
+  #programs .bar-chart{
+    display:flex;
+    align-items:flex-end;
+    gap:12px;
+    margin-top:18px;
+    padding-bottom: 28px; /* space for day labels if added */
+  }
+  
+  /* Each bar uses inline CSS variable --h in your HTML e.g. style="--h:58%"
+     Fallback to 40px minimum so tiny values remain visible. */
+  #programs .bar-chart .bar{
+    position:relative;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    width:44px;
+    height: var(--h, 60px); /* prefer inline value --h:58% etc or use style="height:58%" */
+    min-height: 40px;
+    border-radius: 12px 12px 6px 6px;
+    background: linear-gradient(to top, var(--accent-cyan), var(--accent-indigo));
+    color: #fff;
+    font-weight:700;
+    font-size:.85rem;
+    padding-bottom:8px;
+    box-shadow: 0 8px 18px rgba(160, 19, 123, 0.203);
+  }
+  
+  /* value inside the bar (already centered bottom) */
+  #programs .bar-chart .bar::after{
+    content: attr(data-value);
+    position: absolute;
+    bottom: 8px;
+    left:50%;
+    transform: translateX(-50%);
+    font-weight:700;
+    color:#fff;
+    font-size:.85rem;
+  }
+  
+  /* optional day labels row (if you add .bar-days under the chart) */
+  #programs .bar-days{
+    display:flex;
+    gap:12px;
+    margin-top:10px;
+    color:#6b7280;
+    font-size:.85rem;
+    align-items:center;
+  }
+  #programs .bar-days span{ width:44px; text-align:center; }
+  
+  /* ===========================
+     Small helpers
+     =========================== */
+  .hstack{ display:flex; gap:10px; align-items:center; }
+  .mt{ margin-top:12px; }
+  
+  /* Accessibility: reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; animation-iteration-count:1 !important; transition-duration: 0.001ms !important; scroll-behavior:auto !important; }
+  }
+
+
+  /* CSS - replace or add to your stylesheet */
+
+/* Reset any previous stray rules on .logo */
+.logo {
+  display: block;          /* avoid inline img weirdness */
+  width: 56px;             /* change size if needed */
+  height: 56px;
+  object-fit: cover;       /* fills box without distortion */
+  border-radius: 10px;     /* rounded corners */
+  background: none;        /* remove any background color or image */
+  box-shadow: none;        /* remove accidental shadows */
+  margin: 0;               /* controlled by parent gap */
+}
+
+/* container aligns logo + text on one line */
+.brand {
+  display: flex;
+  align-items: center;     /* vertically center */
+  gap: 14px;               /* space between logo and text */
+}
+
+/* text sizing & spacing */
+.brand-text { line-height: 1; }
+.site-title {
+  margin: 0;
+  font-size: 34px;         /* adjust for your design */
+  font-weight: 700;
+  color: #e6e6ea;
+}
+.site-sub {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #9b98a4;
+}
+
+/* Make sure you don't have the image also set as a CSS background on the same element */
+.brand, .logo {
+  background-image: none !important;
+}
+
+
+/* daily goal */
+/* ===== DAILY GOAL - ensure visible background like the other overview cards ===== */
+
+/* target with extra specificity so it overrides #overview .card rules */
+#overview .card.daily-bg {
+  /* set the image and sizing in one go (center + cover) */
+  background: url("goal.jpg") center center / cover no-repeat;
+  min-height: 160px;           /* match other cards' height */
+  border-radius: 18px;         /* same rounded corners as the light cards */
+  position: relative;
+  overflow: hidden;
+  padding: 18px 20px;          /* keep same inside spacing */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /* remove any background color that might hide the image */
+  background-color: transparent !important;
+}
+
+/* soft dark overlay so text remains readable but image is visible */
+#overview .card.daily-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.20);  /* <--- use dark overlay, not white */
+  border-radius: inherit;
+  z-index: 0;
+}
+
+/* make sure card children (text, donuts) stay on top of the overlay */
+#overview .card.daily-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* FORCE WHITE TEXT ON OVERVIEW CARDS WITH IMAGES */
+#overview .card {
+  color: #ffffff !important;
+}
+
+#overview .card .muted,
+#overview .card .small {
+  color: #f1f1f1 !important;
+}
+
+#overview .card h3 {
+  color: #ffffff !important;
+}
+
+/* Daily goal card text fix */
+#overview .card.daily-bg *,
+#overview .daily-bg .muted,
+#overview .daily-bg h3 {
+  color: #ffffff !important;
+}
+
+
+  
+  /* End of styles.css */
+  
